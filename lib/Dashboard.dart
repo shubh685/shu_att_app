@@ -37,7 +37,7 @@ class Dashboard extends StatefulWidget {
 // ... imports unchanged
 class _DashboardState extends State<Dashboard> {
   String seleAtt = "Att.In", wStatus = "Completed", outReason = "• Time is Completed", leReason ="• Casual Leave";
-  final con = TextEditingController(), co = TextEditingController(); DateTimeRange? dateRange;
+  final con = TextEditingController(), co = TextEditingController(); DateTimeRange? dateRange, datSalary;
   final _form = GlobalKey<FormState>(), _form2 = GlobalKey<FormState>();
 
   Widget _buildCardContent(int index, Size size) {
@@ -326,11 +326,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               padding: EdgeInsets.symmetric(vertical: 14),
                               child: Center(
-                                child: Text("Absence Request", style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5)),
+                                child: Text("Absence Request", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5)),
                               ),
                             ),
                             Center(
@@ -733,8 +729,175 @@ class _DashboardState extends State<Dashboard> {
                 );
               });
         });
+
+      case 2:
+        return showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (context) {
+
+            String selectedMonth = "January"; // ✅ default value
+
+            List<String> months = [
+              "January","February","March","April","May","June",
+              "July","August","September","October","November","December"
+            ];
+
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+
+                      // 🔵 HEADER
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.purple.shade400, Colors.purple],
+                          ),
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        child: Center(
+                          child: Text("Salary Info.", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                        ),
+                      ),
+
+                      SizedBox(height: 15),
+
+                      // 👤 EMPLOYEE ID
+                      Row(
+                        children: [
+                          Icon(CupertinoIcons.person_alt_circle, size: 25),
+                          SizedBox(width: 5),
+                          SizedBox(
+                              height: 20, width: 8,
+                              child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
+                          Text("Employee ID:- ", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                          Text("E1584", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: Colors.purple)),
+                        ],
+                      ), SizedBox(height: 20),
+
+                      Text("Select Month", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
+                      // 🌈 MONTH DROPDOWN
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue.shade100, Colors.purple.shade100],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.purple),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedMonth,
+                            isExpanded: true,
+                            icon: Icon(Icons.arrow_drop_down, color: Colors.purple),
+
+                            items: months.map((month) {
+                              return DropdownMenuItem(
+                                value: month,
+                                child: Text(
+                                  month,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMonth = value!;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 12),
+                        child: Row(
+                          children: [
+                             Column(
+                               children: [
+                                 Text("Present Count", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
+                                 Container(
+                                   height: 35, width: 50,
+                                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                                   decoration: BoxDecoration(
+                                     gradient: LinearGradient(
+                                       colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                     ),
+                                     borderRadius: BorderRadius.circular(12),
+                                     border: Border.all(color: Colors.purple),
+                                   ),
+                                   child: Text("24", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                 ),
+                               ],
+                             ), SizedBox(width: 5),
+                             SizedBox(
+                                height: 60, width: 8,
+                                child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
+                             Column(
+                              children: [
+                                Text("Absence Count", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
+                                Container(
+                                  height: 35, width: 50,
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade400,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: Colors.purple),
+                                  ),
+                                  child: Text("2", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white)),
+                                ),
+                              ],
+                            ), SizedBox(width: 5),
+                             SizedBox(
+                                height: 60, width: 8,
+                                child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
+                             Column(
+                              children: [
+                                Text("Total Hours", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
+                                Container(
+                                  height: 35, width: size.width*0.18,
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: Colors.purple),
+                                  ),
+                                  child: Text("120", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
     }
   }
+
 
   Widget _attIn() {
     final size = MediaQuery.of(context).size;
