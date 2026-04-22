@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_track/Atte%20History.dart';
 import 'package:team_track/Log%20in.dart';
 
 // ─── Theme Colors ────────────────────────────────────────────────────────────
@@ -739,7 +740,9 @@ class _DashboardState extends State<Dashboard> {
           ),
           builder: (context) {
 
-            String selectedMonth = "January"; // ✅ default value
+            final size = MediaQuery.of(context).size; // ✅ IMPORTANT
+
+            String selectedMonth = "January";
 
             List<String> months = [
               "January","February","March","April","May","June",
@@ -749,44 +752,45 @@ class _DashboardState extends State<Dashboard> {
             return StatefulBuilder(
               builder: (context, setState) {
                 return Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(size.width * 0.04),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-
-                      // 🔵 HEADER
+                      /// HEADER
                       Container(
                         width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [Colors.purple.shade400, Colors.purple],
                           ),
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 14),
                         child: Center(
-                          child: Text("Salary Info.", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                          child: Text("Salary Info.", style: TextStyle(fontSize: size.width * 0.05, fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
-                      ),
+                      ), SizedBox(height: size.height * 0.02),
 
-                      SizedBox(height: 15),
-
-                      // 👤 EMPLOYEE ID
+                      /// EMPLOYEE ID
                       Row(
                         children: [
-                          Icon(CupertinoIcons.person_alt_circle, size: 25),
+                          Icon(Icons.person, size: size.width * 0.06),
                           SizedBox(width: 5),
                           SizedBox(
-                              height: 20, width: 8,
-                              child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
-                          Text("Employee ID:- ", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text("E1584", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: Colors.purple)),
+                            height: 20,
+                            child: VerticalDivider(color: Colors.purple, thickness: 3),
+                          ),
+                          SizedBox(width: 5),
+                          Text("Employee ID:- ", style: TextStyle(fontSize: size.width * 0.045)),
+                          Text("E1584", style: TextStyle(fontSize: size.width * 0.045, color: Colors.purple, fontWeight: FontWeight.bold)),
                         ],
-                      ), SizedBox(height: 20),
+                      ), SizedBox(height: size.height * 0.02),
 
-                      Text("Select Month", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
-                      // 🌈 MONTH DROPDOWN
+                      /// MONTH DROPDOWN
+                      Text("Select Month", style: TextStyle(fontSize: size.width * 0.04)),
+                      SizedBox(height: 8),
+
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
@@ -800,21 +804,12 @@ class _DashboardState extends State<Dashboard> {
                           child: DropdownButton<String>(
                             value: selectedMonth,
                             isExpanded: true,
-                            icon: Icon(Icons.arrow_drop_down, color: Colors.purple),
-
                             items: months.map((month) {
                               return DropdownMenuItem(
                                 value: month,
-                                child: Text(
-                                  month,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
-                                  ),
-                                ),
+                                child: Text(month),
                               );
                             }).toList(),
-
                             onChanged: (value) {
                               setState(() {
                                 selectedMonth = value!;
@@ -822,72 +817,256 @@ class _DashboardState extends State<Dashboard> {
                             },
                           ),
                         ),
-                      ),
+                      ), SizedBox(height: size.height * 0.02),
 
-                      SizedBox(height: 20),
+                      /// COUNTS ROW
+                      Row(
+                        children: [
 
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 12),
-                        child: Row(
-                          children: [
-                             Column(
-                               children: [
-                                 Text("Present Count", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
-                                 Container(
-                                   height: 35, width: 50,
-                                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                                   decoration: BoxDecoration(
-                                     gradient: LinearGradient(
-                                       colors: [Colors.blue.shade100, Colors.purple.shade100],
-                                     ),
-                                     borderRadius: BorderRadius.circular(12),
-                                     border: Border.all(color: Colors.purple),
-                                   ),
-                                   child: Text("24", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                                 ),
-                               ],
-                             ), SizedBox(width: 5),
-                             SizedBox(
-                                height: 60, width: 8,
-                                child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
-                             Column(
+                          /// PRESENT
+                          Expanded(
+                            child: Column(
                               children: [
-                                Text("Absence Count", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
+                                Text("Present",
+                                    style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
                                 Container(
-                                  height: 35, width: 50,
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade400,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: Colors.purple),
-                                  ),
-                                  child: Text("2", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white)),
-                                ),
-                              ],
-                            ), SizedBox(width: 5),
-                             SizedBox(
-                                height: 60, width: 8,
-                                child: VerticalDivider(color: Colors.purple.shade400, width: 2, thickness: 4)),  SizedBox(width: 5),
-                             Column(
-                              children: [
-                                Text("Total Hours", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400)), SizedBox(height: 8),
-                                Container(
-                                  height: 35, width: size.width*0.18,
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                  height: 35,
+                                  alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [Colors.blue.shade100, Colors.purple.shade100],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: Colors.purple),
                                   ),
-                                  child: Text("120", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                  child: Text("24",
+                                      style: TextStyle(fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
                                 ),
                               ],
-                            )
+                            ),
+                          ),
+
+                          /// ABSENT
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Absent", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("2", style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// HOURS
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Hours", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("120", style: TextStyle(fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ), SizedBox(height: size.height * 0.02),
+
+                      /// SALARY
+                      Row(
+                        children: [
+                          Icon(Icons.currency_rupee),
+                          SizedBox(width: 5),
+                          Text("Total Salary: ", style: TextStyle(fontSize: size.width * 0.045)),
+                          Text("13000", style: TextStyle(fontSize: size.width * 0.045, color: Colors.purple, fontWeight: FontWeight.bold)),
+                        ],
+                      ), SizedBox(height: size.height * 0.02),
+
+                      /// Salary Counts
+                      Row(
+                        children: [
+
+                          /// PRESENT
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Salary Per Hours", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("25",
+                                      style: TextStyle(fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// ABSENT
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Salary Per Days", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("450", style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ), SizedBox(height: size.height * 0.02),
+
+                      /// Payment Details
+                      Center(
+                        child: Column(
+                          children: [
+                            Text("Payment Status", style: TextStyle(fontSize: size.width * 0.035)),
+                            SizedBox(height: 5),
+                            Container(
+                              height: 35,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text("• Successful", style: TextStyle(fontSize: size.width * 0.045, fontWeight: FontWeight.bold, color:  Color(0xFF4F46E5) )),
+                            ),
                           ],
                         ),
+                      ), SizedBox(height: size.height * 0.02),
+                      Row(
+                        children: [
+
+                          /// PRESENT
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Payment Date", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("12-04-2026", style: TextStyle(fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /// ABSENT
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Payment Mode", style: TextStyle(fontSize: size.width * 0.035)),
+                                SizedBox(height: 5),
+                                Container(
+                                  height: 35,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text("Cash", style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ), SizedBox(height: size.height * 0.02),
+
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: size.width*0.8, height: size.height*0.04,
+                          decoration: BoxDecoration(
+                            color: Colors.purple.shade400,
+                            borderRadius: BorderRadius.circular(12)
+                          ),
+                            child: Center(child: Text("Generate PDF", style: TextStyle(fontSize: size.width * 0.048, color: Colors.white)))),
                       ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 15, top: 15, bottom: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // --- CANCEL BUTTON (Subtle Style) ---
+                            InkWell(
+                              onTap: () { Navigator.pop(context); },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.purple.shade500, // Soft neutral background
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey[300]!, width: 1.5),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                child: const Text("Cancel", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFCDFF6B))),
+                              ),
+                            ),
+
+                            // --- SUBMIT BUTTON (Matches your Palette) ---
+                            InkWell(
+                              onTap: () {
+                                // Add your submission logic here
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.lime.shade200,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.purple.shade500, width: 3),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF4F46E5).withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                                child: const Text("Submit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.purple,),),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 );
@@ -895,6 +1074,9 @@ class _DashboardState extends State<Dashboard> {
             );
           },
         );
+
+      case 3 :
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Atte_History()));
     }
   }
 
