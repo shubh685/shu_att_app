@@ -279,6 +279,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   // STEP 1 — PERSONAL INFO
   // ─────────────────────────────────────────────
   Widget _personalStep() {
+    final size = MediaQuery.of(context).size;
+    String position = "Nursing";
+
+    List<String> poList = [
+      "Nursing", "Doctor",
+    ];
+
     return Form(
       key: _step1Key,
       child: SingleChildScrollView(
@@ -310,8 +317,37 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             _inputField(nameCtrl, "Full Name", Icons.person_outline_rounded),
 
             // Employee ID — only for User
-            if (_selectedRole == 'user')
-              _inputField(empIdCtrl, "Employee ID", Icons.badge_outlined),
+            if (_selectedRole == 'user') ...[
+              _inputField(empIdCtrl, "Employee ID", Icons.badge_outlined), SizedBox(height: 8),
+
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade100, Colors.purple.shade100],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.purple),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: position,
+                    isExpanded: true,
+                    items: poList.map((month) {
+                      return DropdownMenuItem(
+                        value: month,
+                        child: Text(month),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        position = value!;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
 
             const SizedBox(height: 30),
 
@@ -331,6 +367,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   // STEP 2 — CONTACT & PASSWORD
   // ─────────────────────────────────────────────
   Widget _contactStep() {
+    final size = MediaQuery.of(context).size;
     return Form(
       key: _step2Key,
       child: SingleChildScrollView(
@@ -340,21 +377,18 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             Icon(Icons.contact_mail_outlined, size: 70, color: primaryColor),
 
             const SizedBox(height: 20),
-            Text("Contact & Security",
-                style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: textDark)),
+            Text("Contact & Security", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: textDark)),
 
             const SizedBox(height: 10),
-            Text("Set your email & password",
-                style: TextStyle(color: Colors.grey[500])),
+            Text("Set your email & password", style: TextStyle(color: Colors.grey[500])),
 
             const SizedBox(height: 40),
 
             _inputField(emailCtrl, "Email Address", Icons.email_outlined),
             _inputField(phoneCtrl, "Phone Number", Icons.phone_outlined,
                 keyboardType: TextInputType.phone),
+
+
             _inputField(passCtrl, "Password", Icons.lock_outline,
                 isPass: true,
                 obscure: _obscurePass,

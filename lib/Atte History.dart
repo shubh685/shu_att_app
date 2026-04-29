@@ -20,7 +20,7 @@ class _Atte_HistoryState extends State<Atte_History> {
            Container(
             height: size.height*0.27, width: size.width,
             decoration: BoxDecoration(
-              color: Colors.lime.shade300
+              color: Colors.lime.shade400
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +64,7 @@ class _Atte_HistoryState extends State<Atte_History> {
                           child: Row(
                             children: [
                               Icon(CupertinoIcons.person_alt_circle, color: Colors.white), SizedBox(width: size.width*0.05),
-                              Text("Name:-", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, color:  Color(0xFFCDFF6B))), SizedBox(width: size.width*0.05),
+                              Text("Name:-", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, color:  Color(0xFFE8FFB5))), SizedBox(width: size.width*0.05),
                               Text("Shubham Shah", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color:  Color(0xFFCDFF6B)))
                             ],
                           ),
@@ -80,7 +80,7 @@ class _Atte_HistoryState extends State<Atte_History> {
                               Icon(Icons.badge_sharp, color: Colors.white), SizedBox(width: size.width*0.05),
                               Row(
                                 children: [
-                                  Text("Employee ID:-", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, color:  Color(0xFFCDFF6B))), SizedBox(width: size.width*0.023),
+                                  Text("Employee ID:-", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, color:  Color(0xFFE8FFB5))), SizedBox(width: size.width*0.023),
                                   Text("E1584", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color:  Color(0xFFCDFF6B))),
                                 ],
                               )
@@ -395,7 +395,7 @@ class _Atte_HistoryState extends State<Atte_History> {
                 ],
               ),
               child: DataTable(
-                columnSpacing: 45, // 👈 better spacing
+                columnSpacing: 48, // 👈 better spacing
                 headingRowHeight: 45,
                 dataRowHeight: 50,
 

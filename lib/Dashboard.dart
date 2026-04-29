@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:team_track/Atte%20History.dart';
+import 'package:team_track/Leave_History.dart';
 import 'package:team_track/Log%20in.dart';
 
 // ─── Theme Colors ────────────────────────────────────────────────────────────
@@ -40,6 +41,13 @@ class _DashboardState extends State<Dashboard> {
   String seleAtt = "Att.In", wStatus = "Completed", outReason = "• Time is Completed", leReason ="• Casual Leave";
   final con = TextEditingController(), co = TextEditingController(); DateTimeRange? dateRange, datSalary;
   final _form = GlobalKey<FormState>(), _form2 = GlobalKey<FormState>();
+  final _form3 = GlobalKey<FormState>();
+  final edN = TextEditingController(), edE = TextEditingController();
+  String position = "Nursing";
+
+  List<String> poList = [
+    "Nursing", "Doctor",
+  ];
 
   Widget _buildCardContent(int index, Size size) {
     switch (index) {
@@ -691,11 +699,8 @@ class _DashboardState extends State<Dashboard> {
                                               child: Container(
                                                 decoration: BoxDecoration(
                                                   color: Colors.lime.shade200,
-                                                  borderRadius: BorderRadius
-                                                      .circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.purple
-                                                          .shade500, width: 3),
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  border: Border.all(color: Colors.purple.shade500, width: 3),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: const Color(
@@ -712,8 +717,7 @@ class _DashboardState extends State<Dashboard> {
                                                     vertical: 10),
                                                 child: const Text("Submit",
                                                   style: TextStyle(fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.purple,),),
+                                                    fontWeight: FontWeight.bold, color: Colors.purple,),),
                                               ),
                                             ),
                                           ],
@@ -827,8 +831,7 @@ class _DashboardState extends State<Dashboard> {
                           Expanded(
                             child: Column(
                               children: [
-                                Text("Present",
-                                    style: TextStyle(fontSize: size.width * 0.035)),
+                                Text("Present", style: TextStyle(fontSize: size.width * 0.035)),
                                 SizedBox(height: 5),
                                 Container(
                                   height: 35,
@@ -1077,9 +1080,211 @@ class _DashboardState extends State<Dashboard> {
 
       case 3 :
         Navigator.push(context, MaterialPageRoute(builder: (context) => Atte_History()));
-    }
-  }
+   
+      case 4:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LeaveHistory()));
 
+      case 5:
+        return showModalBottomSheet(context: context,
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) {
+            return StatefulBuilder(builder: (context, setStateST) {
+                  return Form(
+                    key: _form3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                          /// HEADER
+                          Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF4F46E5),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(CupertinoIcons.person_alt_circle, size: 30, color: Colors.white), SizedBox( height: size.height*0.04,width: size.width*0.065,
+                                  child: VerticalDivider(color: Colors.lime, thickness: 5)),
+                                  Text("Edit Profile.", style: TextStyle(fontSize: size.width * 0.05, fontWeight: FontWeight.bold, color: Colors.white)),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Container(
+                                  height: 110, width: 110,
+                                  decoration: BoxDecoration(
+                                      color: Colors.lime.shade100,
+                                      border: Border.all(color: Colors.black, width: 2),
+                                      borderRadius: BorderRadius.circular(0)
+                                  ),
+                                  child: Icon(CupertinoIcons.profile_circled, color: Color(0xFF4F46E5), size: 50),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ), SizedBox(height: size.height * 0.02),
+
+                          Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 12),
+                          child: Container(
+                            height: size.height*0.05,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.lime.shade300, width: 2)
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.badge_sharp, color: Colors.white), SizedBox(width: size.width*0.05),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Employee ID:-", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400, color:  Color(0xFFE8FFB5))), SizedBox(width: size.width*0.023),
+                                    Text("E1584", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color:  Color(0xFFCDFF6B))),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),SizedBox(height: size.height*0.02),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text("Full Name", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Color(0xFF4F46E5))),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+                            child: TextFormField(
+                              controller: edN,
+                              decoration: InputDecoration(
+                                hintText: "Enter Name", filled: true, fillColor: Colors.grey.shade300,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.red)
+                                )
+                              ),
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15, top: 8),
+                            child: Text("Email ID", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Color(0xFF4F46E5))),
+                          ),
+
+                          Padding(
+                          padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+                          child: TextFormField(
+                            controller: edN,
+                            decoration: InputDecoration(
+                                hintText: "Enter Email", filled: true, fillColor: Colors.grey.shade300,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: Colors.red)
+                                )
+                            ),
+                          ),
+                        ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+                            child: Text("Select Position", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Color(0xFF4F46E5))),
+                          ),
+
+                          Padding(
+                             padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
+                             child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                 colors: [Colors.blue.shade100, Colors.purple.shade100],
+                                ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.purple),
+                             ),
+                             child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: position,
+                                isExpanded: true,
+                                items: poList.map((month) {
+                                  return DropdownMenuItem(
+                                    value: month,
+                                    child: Text(month),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    position = value!;
+                                  });
+                                },
+                              ),
+                                                           ),
+                                                         ),
+                           ),
+
+                          Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 15, top: 15, bottom: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // --- CANCEL BUTTON (Subtle Style) ---
+                              InkWell(
+                                onTap: () { Navigator.pop(context); },
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple.shade500, // Soft neutral background
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.grey[300]!, width: 1.5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                                  child: const Text("Cancel", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFFCDFF6B))),
+                                ),
+                              ),
+
+                              // --- SUBMIT BUTTON (Matches your Palette) ---
+                              InkWell(
+                                onTap: () {
+                                  // Add your submission logic here
+                                },
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.lime.shade200,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.purple.shade500, width: 3),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF4F46E5).withOpacity(0.3),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                                  child: const Text("Submit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.purple,),),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+            });
+        });
+    }
+
+  }
 
   Widget _attIn() {
     final size = MediaQuery.of(context).size;
@@ -1653,16 +1858,7 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(width: 8),
             Icon(icon, size: 25, color: Colors.white),
             SizedBox(width: 10),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: isSelected
-                    ? Colors.lime.shade200
-                    : Colors.white,
-              ),
-            )
+            Text(label, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: isSelected ? Colors.lime.shade200 : Colors.white))
           ],
         ),
       ),
@@ -1885,7 +2081,7 @@ class _DashboardState extends State<Dashboard> {
                   )
                 ),
               ),
-            ),
+            ), SizedBox(height: size.height*0.015),
             Row(
               children: [
                 Expanded(child: _infoCard("Employee ID", "E1584", size, titleColor: Colors.purple.shade500)),
@@ -1903,7 +2099,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Color(0xFF4F46E5),
                     border: Border.all(color: Colors.red, width: 2)
                 ),
-                child: Text("Quick Actions", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text("Navigations", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
             Wrap(
