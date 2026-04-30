@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   final nameCtrl = TextEditingController();
   final empIdCtrl = TextEditingController();
   String _selectedRole = 'user';
+
   // Step 2 — Contact & Password
   final _step2Key = GlobalKey<FormState>();
   final emailCtrl = TextEditingController();
@@ -36,13 +37,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
   bool isLoading = false;
 
-  // ── COLORS (match ForgotPassword) ──
+  // ── COLORS ──
   final primaryColor = const Color(0xFF4F46E5);
   final bgColor = Colors.white;
   final inputBg = const Color(0xFFF8FAFC);
   final textDark = const Color(0xFF1E293B);
 
-  // ── ANIMATIONS — nullable to avoid late init error ──
+  // ── ANIMATIONS ──
   AnimationController? _fadeCtrl;
   AnimationController? _slideCtrl;
   Animation<double>? _fadeAnim;
@@ -50,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
   @override
   void initState() {
-    super.initState(); // ✅ always first
+    super.initState();
 
     _fadeCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 400));
@@ -58,7 +59,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _slideCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 400));
 
-    // ✅ created AFTER controllers — no late init risk
     _fadeAnim = CurvedAnimation(parent: _fadeCtrl!, curve: Curves.easeIn);
 
     _slideAnim = Tween<Offset>(
@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
   @override
   void dispose() {
-    _fadeCtrl?.dispose();   // ✅ null-safe dispose
+    _fadeCtrl?.dispose();
     _slideCtrl?.dispose();
     nameCtrl.dispose();
     empIdCtrl.dispose();
@@ -90,9 +90,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _slideCtrl?.forward();
   }
 
-  // ─────────────────────────────────────────────
-  // REGISTER LOGIC
-  // ─────────────────────────────────────────────
   Future<void> _registerUser() async {
     if (_image == null) {
       _showSnack("Please capture a photo first", isError: true);
@@ -108,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
     setState(() {
       isLoading = false;
-      _step = 3; // success
+      _step = 3;
     });
     _playAnimation();
   }
@@ -134,9 +131,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     ));
   }
 
-  // ─────────────────────────────────────────────
-  // BUILD
-  // ─────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,7 +142,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             children: [
               const SizedBox(height: 20),
 
-              // Back Button
               Row(
                 children: [
                   IconButton(
@@ -167,13 +160,11 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
               const SizedBox(height: 20),
 
-              // Step Indicator — only for steps 0,1,2
               if (_step < 3) _buildStepIndicator(),
 
               const SizedBox(height: 30),
 
               Expanded(
-                // ✅ null-guard: show directly if animations not yet ready
                 child: (_fadeAnim == null || _slideAnim == null)
                     ? _buildCurrentStep()
                     : FadeTransition(
@@ -192,17 +183,22 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   }
 
   // ─────────────────────────────────────────────
-  // STEP INDICATOR
+  // FIX: Removed Expanded from inside Column's children.
+  // Use a Row with fixed-width containers + flexible spacers instead.
   // ─────────────────────────────────────────────
   Widget _buildStepIndicator() {
     final steps = ['Personal', 'Contact', 'Photo'];
 
     return Row(
-      children: List.generate(3, (i) {
+      children: List.generate(steps.length, (i) {
         final active = i == _step;
+        // ✅ FIX: Wrap the Column in Expanded directly as a Row child —
+        // no extra Container/Padding wrapping Expanded.
         return Expanded(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // ✅ FIX: Use a plain Container here — no Expanded inside Column
               Container(
                 height: 4,
                 color: i <= _step ? primaryColor : Colors.grey[300],
@@ -239,52 +235,53 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   }
 
   Widget _roleChip(String role, IconData icon, String label) {
+    final size = MediaQuery.of(context).size;
     final selected = _selectedRole == role;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() {
-          _selectedRole = role;
-          if (role == 'admin') empIdCtrl.clear(); // clear if switching away
-        }),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: selected ? primaryColor.withOpacity(0.08) : inputBg,
-            border: Border.all(
-              color: selected ? primaryColor : Colors.grey.shade300,
-              width: selected ? 1.8 : 1,
-            ),
-            borderRadius: BorderRadius.circular(14),
+
+    return GestureDetector(
+      onTap: () => setState(() {
+        _selectedRole = role;
+        if (role == 'admin') empIdCtrl.clear();
+      }),
+      child: AnimatedContainer(
+        width: size.width * 0.28,
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: selected ? primaryColor.withOpacity(0.08) : inputBg,
+          border: Border.all(
+            color: selected ? primaryColor : Colors.grey.shade300,
+            width: selected ? 1.8 : 1,
           ),
-          child: Column(
-            children: [
-              Icon(icon, color: selected ? primaryColor : Colors.grey, size: 26),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: selected ? primaryColor : Colors.grey,
-                ),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: selected ? primaryColor : Colors.grey, size: 26),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: selected ? primaryColor : Colors.grey,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+
   // ─────────────────────────────────────────────
   // STEP 1 — PERSONAL INFO
   // ─────────────────────────────────────────────
   Widget _personalStep() {
-    final size = MediaQuery.of(context).size;
+    // ✅ FIX: Make position a state-level variable or use a local StatefulBuilder
+    // to avoid it resetting on every rebuild. Using StatefulBuilder here.
     String position = "Nursing";
-
-    List<String> poList = [
-      "Nursing", "Doctor",
-    ];
+    final List<String> poList = ["Nursing", "Doctor"];
 
     return Form(
       key: _step1Key,
@@ -296,7 +293,10 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
             const SizedBox(height: 20),
             Text("Personal Info",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: textDark)),
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: textDark)),
             const SizedBox(height: 10),
             Text("Tell us about yourself",
                 style: TextStyle(color: Colors.grey[500])),
@@ -305,9 +305,10 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
             // ── Role Toggle ──
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _roleChip('user', Icons.person_outline_rounded, 'User'),
-                const SizedBox(width: 12),
+                const SizedBox(width: 20),
                 _roleChip('admin', Icons.admin_panel_settings_outlined, 'Admin'),
               ],
             ),
@@ -316,36 +317,42 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
             _inputField(nameCtrl, "Full Name", Icons.person_outline_rounded),
 
-            // Employee ID — only for User
             if (_selectedRole == 'user') ...[
-              _inputField(empIdCtrl, "Employee ID", Icons.badge_outlined), SizedBox(height: 8),
+              _inputField(empIdCtrl, "Employee ID", Icons.badge_outlined),
+              const SizedBox(height: 8),
 
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue.shade100, Colors.purple.shade100],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.purple),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: position,
-                    isExpanded: true,
-                    items: poList.map((month) {
-                      return DropdownMenuItem(
-                        value: month,
-                        child: Text(month),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        position = value!;
-                      });
-                    },
-                  ),
-                ),
+              // ✅ FIX: Wrap dropdown in StatefulBuilder so position state is local
+              StatefulBuilder(
+                builder: (context, setLocalState) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.blue.shade100,
+                          Colors.purple.shade100
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.purple),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: position,
+                        isExpanded: true,
+                        items: poList.map((p) {
+                          return DropdownMenuItem(
+                            value: p,
+                            child: Text(p),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setLocalState(() => position = value!);
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
 
@@ -367,7 +374,6 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   // STEP 2 — CONTACT & PASSWORD
   // ─────────────────────────────────────────────
   Widget _contactStep() {
-    final size = MediaQuery.of(context).size;
     return Form(
       key: _step2Key,
       child: SingleChildScrollView(
@@ -377,10 +383,15 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             Icon(Icons.contact_mail_outlined, size: 70, color: primaryColor),
 
             const SizedBox(height: 20),
-            Text("Contact & Security", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: textDark)),
+            Text("Contact & Security",
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: textDark)),
 
             const SizedBox(height: 10),
-            Text("Set your email & password", style: TextStyle(color: Colors.grey[500])),
+            Text("Set your email & password",
+                style: TextStyle(color: Colors.grey[500])),
 
             const SizedBox(height: 40),
 
@@ -388,13 +399,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             _inputField(phoneCtrl, "Phone Number", Icons.phone_outlined,
                 keyboardType: TextInputType.phone),
 
-
             _inputField(passCtrl, "Password", Icons.lock_outline,
                 isPass: true,
                 obscure: _obscurePass,
                 onToggle: () =>
                     setState(() => _obscurePass = !_obscurePass)),
-            _inputField(confirmPassCtrl, "Confirm Password", Icons.lock_outline,
+            _inputField(
+                confirmPassCtrl, "Confirm Password", Icons.lock_outline,
                 isPass: true,
                 obscure: _obscureConfirm,
                 onToggle: () =>
@@ -433,9 +444,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
         const SizedBox(height: 20),
         Text("Profile Photo",
             style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: textDark)),
+                fontSize: 26, fontWeight: FontWeight.bold, color: textDark)),
 
         const SizedBox(height: 10),
         Text("Take a clear front-facing photo",
@@ -480,9 +489,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
 
         const SizedBox(height: 16),
         Text(
-          _image == null ? "Tap to capture photo" : "Tap to retake",
-          style: TextStyle(color: Colors.grey[500], fontSize: 13),
-        ),
+            _image == null ? "Tap to capture photo" : "Tap to retake",
+            style: TextStyle(color: Colors.grey[500], fontSize: 13)),
 
         const SizedBox(height: 40),
 
@@ -525,7 +533,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   }
 
   // ─────────────────────────────────────────────
-  // COMMON WIDGETS (identical style to ForgotPassword)
+  // COMMON WIDGETS
   // ─────────────────────────────────────────────
   Widget _inputField(
       TextEditingController ctrl,
@@ -537,6 +545,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
         TextInputType keyboardType = TextInputType.text,
         String? Function(String?)? extraValidator,
       }) {
+    // ✅ FIX: Removed unnecessary SingleChildScrollView wrapper around each input
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -564,7 +573,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 18),
         ),
-        validator: extraValidator ?? (v) => v!.isEmpty ? "Required" : null,
+        validator:
+        extraValidator ?? (v) => v!.isEmpty ? "Required" : null,
       ),
     );
   }
@@ -582,14 +592,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
         ),
         child: isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
-          text,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 0.5,
-          ),
-        ),
+            : Text(text, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5)),
       ),
     );
   }
