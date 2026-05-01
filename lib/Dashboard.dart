@@ -2400,6 +2400,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           child: InkWell(
             onTap: () {
               Navigator.pop(context);
+              setStateT(() {
+                _step = 0;
+              });
             },
             child: Container(
               width: size.width,
