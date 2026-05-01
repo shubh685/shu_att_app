@@ -3,9 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -1900,7 +1897,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
   Widget _buildStepIndicator() {
 
-    final steps = ['Page 1', 'Page2 ', 'Page 3'];
+    final steps = ['Page 1', 'Page2 ', 'Page 3', 'Page 4'];
 
     return Row(
       children: List.generate(steps.length, (i) {
@@ -1913,7 +1910,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
             children: [
               // ✅ FIX: Use a plain Container here — no Expanded inside Column
               Container(
-                height: 25, width: 70,
+                height: 25, width: 65,
                 color: i <= _step ? primaryColor : Colors.grey[300],
                 child:  Center(
                   child: Text(
@@ -1932,167 +1929,494 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildAllPage () {
+  Widget _buildAllPage (void Function(void Function()) setStateAP) {
     switch(_step) {
       case 0:
-        return _firstPage();
+        return _firstPage(setStateAP);
 
       case 1:
-        return _secondPage();
+        return _secondPage(setStateAP);
+
+      case 2:
+        return _ThirdPage(setStateAP);
+
+      case 3:
+        return _FourthPage(setStateAP);
 
       default:
         return SizedBox();
     }
   }
 
-  Widget _firstPage() {
+  Widget _firstPage(void Function(void Function()) setState) {
     final size = MediaQuery.of(context).size;
-     return Column(
-       children: [
-         Padding(
-           padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
-           child: Container(
-             width: size.width,
-             decoration: BoxDecoration(
-                 borderRadius: BorderRadius.circular(16),
-                 color: Colors.grey.shade300
-             ),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 /// Header
-                 Container(
-                   width: size.width,
-                   padding: EdgeInsets.all(12),
-                   decoration: BoxDecoration(
-                     color: Colors.purple,
-                     borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                   ),
-                   child: Text("Att. In / Our Card", style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Color(0xFFCDFF6B))),
-                 ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Att. In / Out Card",
+                      style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFCDFF6B))),
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(left: 15, top: 8),
+                    child: Column(
+                      children: [
+                        Text(
+                          "• Open the Att. In card to submit your attendance when you enter the office. It will fetch your current location automatically.",
+                          style: TextStyle(
+                              fontSize: 14.5, fontWeight: FontWeight.w400),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "• Open the Att. Out card to submit your attendance when you leave the office or work from another location. It will fetch your current location automatically. Also, mention your work status and the reason for being out of the office.",
+                          style: TextStyle(
+                              fontSize: 14.5, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    )),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Leave Form",
+                      style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFCDFF6B))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Text(
+                    "• In the leave form, select your leave type, enter how many days you need, and write the reason.",
+                    style:
+                    TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 15, bottom: 8),
+          child: InkWell(
+              onTap: () {
+                setState(() {
+                  _step = 1;
+                });
+              },
+              child: Container(
+                  padding: EdgeInsets.only(left: 12, right: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                      child: Text("Continue >>",
+                          style: TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))))),
+        )
+      ],
+    );
+  }
 
+  Widget _secondPage(void Function(void Function()) setStateSP) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Salary Info.",
+                      style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFCDFF6B))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "• This screen allows you to view your salary details. First, select the required month to see your information.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• After selecting the month, you can check your total present days, absent days, and working hours (including daily hours).",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• You can also view your total monthly salary and payment status, including payment date and mode (Cash, GPay, or Bank Transfer).",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• You can download the PDF for full details. If you find any mistake, check it on your phone and report it to your boss.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
 
-                 Padding(
-                     padding: const EdgeInsets.only(left: 15, top: 8),
-                     child:   Column(
-                       children: [
-                         Text(
-                           "• Open the Att. In card to submit your attendance when you enter the office. It will fetch your current location automatically.",
-                           style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-                         ), SizedBox(height: 5),
-                         Text(
-                           "• Open the Att. Out card to submit your attendance when you leave the office or work from another location. It will fetch your current location automatically. Also, mention your work status and the reason for being out of the office.",
-                           style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-                         ),
-                       ],
-                     )
-                 ),
-
-               ],
-             ),
-           ),
-         ),
-
-         Padding(
-           padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
-           child: Container(
-             width: size.width,
-             decoration: BoxDecoration(
-                 borderRadius: BorderRadius.circular(16),
-                 color: Colors.grey.shade300
-             ),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 /// Header
-                 Container(
-                   width: size.width,
-                   padding: EdgeInsets.all(12),
-                   decoration: BoxDecoration(
-                     color: Colors.red,
-                     borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                   ),
-                   child: Text("Leave Form", style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Color(0xFFCDFF6B))),
-                 ),
-
-
-                 Padding(
-                   padding: const EdgeInsets.only(left: 15, top: 8),
-                   child:   Text(
-                     "• In the leave form, select your leave type, enter how many days you need, and write the reason.",
-                     style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-                   ),
-                 ),
-
-               ],
-             ),
-           ),
-         ), SizedBox(height: 8),
-
-         InkWell(
+        /// Back Button Row
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: InkWell(
             onTap: () {
-              setState(() {
+              setStateSP(() {
+                _step = 0;
+              });
+            },
+            child: Row(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF4F46E5), shape: BoxShape.circle),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: Colors.white)),
+                SizedBox(width: size.width * 0.025),
+                Text("Back to Page 1", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)))
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+
+        /// Continue Button
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 15, bottom: 8),
+          child: InkWell(
+              onTap: () {
+                setStateSP(() {
+                  _step = 2;
+                });
+              },
+              child: Container(
+                  padding: EdgeInsets.only(left: 12, right: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                      child: Text("Continue >>", style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.bold, color: Colors.white))))),
+        )
+      ],
+    );
+  }
+
+  Widget _ThirdPage(void Function(void Function()) setStateS) {
+    final size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Att. History.",
+                      style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFCDFF6B))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "• This screen shows your attendance history along with your Name, Employee ID, and Current Date.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• In Today's Activity, you can check your Attendance In and Out time, Present/Absent status, and Total Working Hours.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• In Monthly Activity, you can view Total Present Days and Absent Days for the selected month (excluding Sundays and holidays).",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• You can also see the overall attendance summary and total working hours for the entire month.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• Use the Filter option to select specific dates and view detailed attendance records.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+
+        /// Back Button Row
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: InkWell(
+            onTap: () {
+              setStateS(() {
                 _step = 1;
               });
             },
-             child: Text("Continue", style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.bold, color: Colors.red)))
-       ],
-     );
+            child: Row(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF4F46E5), shape: BoxShape.circle),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: Colors.white)),
+                SizedBox(width: size.width * 0.025),
+                Text("Back to Page 2", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)))
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
+
+        /// Continue Button
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 15, bottom: 8),
+          child: InkWell(
+              onTap: () {
+                setStateS(() {
+                  _step = 3;
+                });
+              },
+              child: Container(
+                  padding: EdgeInsets.only(left: 12, right: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Center(
+                      child: Text("Continue >>",
+                          style: TextStyle(
+                              fontSize: 15.8,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white))))),
+        )
+      ],
+    );
   }
 
-  Widget _secondPage () {
+  Widget _FourthPage(void Function(void Function()) setStateT) {
     final size = MediaQuery.of(context).size;
-    return  Padding(
-            padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Leave History", style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Color(0xFFCDFF6B))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "• This screen shows your Leave History with Employee ID and allows you to search leave by type.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• You can view Total, Approved, and Pending leave requests, and filter them using All, Pending, or Approved options.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                      Text(
+                        "• Each leave record shows leave type, date range, status, and reason provided for the leave request.",
+                        style: TextStyle(
+                            fontSize: 14.5, fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(top: 12, left: 10, right: 10, bottom: 10),
+          child: Container(
+            width: size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.grey.shade300),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header
+                Container(
+                  width: size.width,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF4F46E5),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  child: Text("Edit Profile", style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, top: 8),
+                  child: Text(
+                    "• In the Edit Profile section, you can enter and update your Name, Email ID, Profile Photo, and Position.",
+                    style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+
+        /// Back Button Row
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: InkWell(
+            onTap: () {
+              setStateT(() {
+                _step = 2;
+              });
+            },
+            child: Row(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF4F46E5), shape: BoxShape.circle),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: Colors.white)),
+                SizedBox(width: size.width * 0.025),
+                Text("Back to Page 3", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)))
+              ],
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.only(left: 15, right: 12, top: 11.5, bottom: 8),
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
             child: Container(
               width: size.width,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.grey.shade300
-               ),
-              child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: [
-                   /// Header
-                   Container(
-  width: size.width,
-  padding: EdgeInsets.all(12),
-  decoration: BoxDecoration(
-  gradient:  LinearGradient(colors: [
-  Colors.purple, Colors.red
-  ]),
-  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  ),
-  child: Text("Salary Info.", style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold, color: Color(0xFFCDFF6B))),
-  ),
-                   Padding(
-  padding: const EdgeInsets.only(left: 15, top: 8),
-  child:   Column(
-  children: [
-         Text(
-           "• This screen allows you to view your salary details. First, select the required month to see your information.",
-           style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-         ),
-         Text(
-           "• After selecting the month, you can check your total present days, absent days, and working hours (including daily hours).",
-             style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-         ),
-         Text(
-           "• You can also view your total monthly salary and payment status, including payment date and mode (Cash, GPay, or Bank Transfer).",
-             style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-         ),
-        Text(
-           "• You can download the PDF for full details. If you find any mistake, check it on your phone and report it to your boss.",
-           style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w400),
-        ),
-     ],
-    ),
-  ),
-                 ],
-               ),
+              padding: EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 8),
+              decoration: BoxDecoration(
+                color: Color(0xFF4F46E5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.red, width: 2)
+              ),
+              child: Center(child: Text("Got It", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color:  Color(0xFFCDFF6B)))),
             ),
-   );
- }
+          ),
+        )
+      ],
+    );
+  }
+
 
   // Update build method background to Light Theme
   @override
@@ -2126,7 +2450,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
                                 /// HEADER
                                 Container( // 🎨 ENHANCED
-                                  width: double.infinity,
+                                  width: double.infinity, height: size.height*0.072,
                                   decoration: BoxDecoration(
                                     color: Colors.lime.shade400,
                                     borderRadius: BorderRadius.only(
@@ -2135,22 +2459,36 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                     ),
                                   ),
                                   padding: EdgeInsets.symmetric(vertical: 14),
-                                  child: Center(
-                                    child: Text("App Guide", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("App Guide", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 0.5)), SizedBox(width: size.width*0.42),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            _step = 0;
+                                          });
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 15, backgroundColor: Colors.red,
+                                            child: Icon(Icons.close, color:  Color(0xFFCDFF6B), size: 23)),
+                                      )
+                                    ],
                                   ),
                                 ), SizedBox(height: 10),
 
-                                if (_step < 3) Padding(
+                                if (_step <= 3) Padding(
                                   padding: const EdgeInsets.only(left: 12.5, right: 12),
                                   child: _buildStepIndicator(),
                                 ),
 
                                 (_fadeAnim == null || _slideAnim == null)
-                                    ? _buildAllPage() : FadeTransition(
+                                    ? _buildAllPage(setState) : FadeTransition(
                                   opacity: _fadeAnim!,
                                   child: SlideTransition(
                                     position: _slideAnim!,
-                                    child: _buildAllPage(),
+                                    child: _buildAllPage(setState),
                                   ),
                                 ),
                               ]
@@ -2364,7 +2702,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                     color: Color(0xFF4F46E5),
                     border: Border.all(color: Colors.red, width: 2)
                 ),
-                child: Text("Navigations", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text("Move to All Pages", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
             Wrap(

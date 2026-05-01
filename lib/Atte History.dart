@@ -20,7 +20,7 @@ class _Atte_HistoryState extends State<Atte_History> {
            Container(
             height: size.height*0.27, width: size.width,
             decoration: BoxDecoration(
-              color: Colors.lime.shade400
+              color: Colors.lime.shade300
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
