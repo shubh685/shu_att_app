@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:team_track/Admin_Dashboard.dart';
 import 'Dashboard.dart';
 import 'For_Pwd.dart';
 import 'Register.dart';
@@ -14,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailCtrl = TextEditingController();
-  final passCtrl = TextEditingController();
+  final passCtrl = TextEditingController(); String type = "User";
 
   bool isLoading = false;
   bool _isObscure = true;
@@ -39,10 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() => isLoading = false);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Dashboard()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AdminDashboard()));
     }
   }
 
